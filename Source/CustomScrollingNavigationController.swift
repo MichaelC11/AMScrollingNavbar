@@ -178,7 +178,8 @@ open class CustomScrollingNavigationController: UINavigationController, UIGestur
         
         if state == .expanded {
             self.state = .scrolling
-            UIView.animate(withDuration: animated ? duration : 0, animations: { () -> Void in
+            
+            let mainWork = {
                 if let activeScrollHandler = self.getScrollHandlerForScrollView(scrollView: activeScrollView) {
                     activeScrollHandler.scrollWithDelta(self.fullNavbarHeight)
                 } else {
@@ -191,9 +192,23 @@ open class CustomScrollingNavigationController: UINavigationController, UIGestur
                     let currentOffset = activeScrollHandler.contentOffset
                     activeScrollHandler.scrollView()?.contentOffset = CGPoint(x: currentOffset.x, y: currentOffset.y + self.navbarHeight)
                 }
-            }) { _ in
+            }
+            
+            let completionWork = {
                 self.state = .collapsed
             }
+            
+            if animated {
+                UIView.animate(withDuration: animated ? duration : 0, animations: { () -> Void in
+                    mainWork()
+                }) { _ in
+                    completionWork()
+                }
+            } else {
+                mainWork()
+                completionWork()
+            }
+            
         } else {
             updateNavbarAlpha()
         }
@@ -211,12 +226,13 @@ open class CustomScrollingNavigationController: UINavigationController, UIGestur
         
         if state == .collapsed {
             self.state = .scrolling
-            UIView.animate(withDuration: animated ? duration : 0.0, animations: {
+            
+            let mainWork = {
                 // Note: Assuming we don't call this function in the middle of a PanGesture, we probably don't need?
-//                for scrollHandler in self.scrollHandlers {
-//                    scrollHandler.lastContentOffset = 0
-//                    scrollHandler.delayDistance = -self.fullNavbarHeight
-//                }
+                //                for scrollHandler in self.scrollHandlers {
+                //                    scrollHandler.lastContentOffset = 0
+                //                    scrollHandler.delayDistance = -self.fullNavbarHeight
+                //                }
                 
                 if let activeScrollHandler = self.getScrollHandlerForScrollView(scrollView: activeScrollView) {
                     activeScrollHandler.scrollWithDelta(-self.fullNavbarHeight)
@@ -230,9 +246,23 @@ open class CustomScrollingNavigationController: UINavigationController, UIGestur
                     let currentOffset = activeScrollHandler.contentOffset
                     activeScrollHandler.scrollView()?.contentOffset = CGPoint(x: currentOffset.x, y: currentOffset.y - self.navbarHeight)
                 }
-            }) { _ in
+            }
+            
+            let completionWork = {
                 self.state = .expanded
             }
+            
+            if animated {
+                UIView.animate(withDuration: animated ? duration : 0.0, animations: {
+                    mainWork()
+                }) { _ in
+                    completionWork()
+                }
+            } else {
+                mainWork()
+                completionWork()
+            }
+            
         } else {
             updateNavbarAlpha()
         }

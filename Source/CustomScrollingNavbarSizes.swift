@@ -5,19 +5,19 @@ import WebKit
  Implements the main functions providing constants values and computed ones
  */
 extension CustomScrollingNavigationController {
-    var fullNavbarHeight: CGFloat {
+    open var fullNavbarHeight: CGFloat {
         return navbarHeight + statusBarHeight
     }
     
-    var navbarHeight: CGFloat {
+    open var navbarHeight: CGFloat {
         return navigationBar.frame.size.height
     }
     
-    var statusBarHeight: CGFloat {
+    open var statusBarHeight: CGFloat {
         return UIApplication.shared.statusBarFrame.size.height
     }
     
-    var tabBarOffset: CGFloat {
+    open var tabBarOffset: CGFloat {
         // Only account for the tab bar if a tab bar controller is present and the bar is not translucent
         if let tabBarController = tabBarController {
             return tabBarController.tabBar.isTranslucent ? 0 : tabBarController.tabBar.frame.height
@@ -25,7 +25,7 @@ extension CustomScrollingNavigationController {
         return 0
     }
     
-    var deltaLimit: CGFloat {
+    open var deltaLimit: CGFloat {
         return navbarHeight - statusBarHeight
     }
 }
