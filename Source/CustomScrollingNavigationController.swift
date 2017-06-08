@@ -173,7 +173,7 @@ open class CustomScrollingNavigationController: UINavigationController, UIGestur
      - parameter activeScrollView: Optional UIView that will also be adjusted if NavBar hides. Defaults to nil
      - parameter duration: Optional animation duration. Defaults to 0.1
      */
-    public func hideNavbar(animated: Bool = true, activeScrollView: UIView? = nil, duration: TimeInterval = 0.1) {
+    open func hideNavbar(animated: Bool = true, activeScrollView: UIView? = nil, duration: TimeInterval = 0.1) {
         guard let visibleViewController = self.visibleViewController else { return }
         
         if state == .expanded {
@@ -221,7 +221,7 @@ open class CustomScrollingNavigationController: UINavigationController, UIGestur
      - parameter activeScrollView: Optional UIView that will also be adjusted if NavBar hides. Defaults to nil
      - parameter duration: Optional animation duration. Defaults to 0.1
      */
-    public func showNavbar(animated: Bool = true, activeScrollView: UIView? = nil, duration: TimeInterval = 0.1) {
+    open func showNavbar(animated: Bool = true, activeScrollView: UIView? = nil, duration: TimeInterval = 0.1) {
         guard let visibleViewController = self.visibleViewController else { return }
         
         if state == .collapsed {
@@ -440,7 +440,7 @@ open class CustomScrollingHandler: NSObject, UIGestureRecognizerDelegate {
         self.scrollSpeedFactor = CGFloat(scrollSpeedFactor)
     }
     
-    public func stopFollowingScrollView() {
+    open func stopFollowingScrollView() {
         if let gesture = gestureRecognizer {
             scrollableView?.removeGestureRecognizer(gesture)
         }
@@ -454,7 +454,7 @@ open class CustomScrollingHandler: NSObject, UIGestureRecognizerDelegate {
         if gesture.state != .failed {
             if let superview = scrollableView?.superview {
                 let translation = gesture.translation(in: superview)
-                let delta = lastContentOffset - translation.y
+                let delta = (lastContentOffset - translation.y) / scrollSpeedFactor
                 lastContentOffset = translation.y
                 
                 if shouldScrollWithDelta(delta) {
@@ -473,14 +473,14 @@ open class CustomScrollingHandler: NSObject, UIGestureRecognizerDelegate {
     /**
      UIGestureRecognizerDelegate function. Enables the scrolling of both the content and the navigation bar
      */
-    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    open func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
     
     /**
      UIGestureRecognizerDelegate function. Only scrolls the navigation bar with the content when `scrollingEnabled` is true
      */
-    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+    open func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
         return scrollNavigationController.scrollingEnabled
     }
     
@@ -493,26 +493,24 @@ open class CustomScrollingHandler: NSObject, UIGestureRecognizerDelegate {
                 // Only if the content is big enough
                 return false
             }
-        } else {
-            if contentOffset.y < 0 {
-                return false
-            }
         }
         return true
     }
     
-    fileprivate func scrollWithDelta(_ delta: CGFloat) {
-        var scrollDelta = delta / scrollSpeedFactor
+    fileprivate func scrollWithDelta(_ delta: CGFloat, ignoreDelay: Bool = false) {
+        var scrollDelta = delta
         let frame = self.scrollNavigationController.navigationBar.frame
         
         // View scrolling up, hide the navbar
         if scrollDelta > 0 {
             // Update the delay
-            delayDistance -= scrollDelta
-            
-            // Skip if the delay is not over yet
-            if delayDistance > 0 {
-                return
+            if !ignoreDelay {
+                delayDistance -= scrollDelta
+                
+                // Skip if the delay is not over yet
+                if delayDistance > 0 {
+                    return
+                }
             }
             
             // No need to scroll if the content fits
@@ -537,11 +535,13 @@ open class CustomScrollingHandler: NSObject, UIGestureRecognizerDelegate {
         
         if scrollDelta < 0 {
             // Update the delay
-            delayDistance += scrollDelta
-            
-            // Skip if the delay is not over yet
-            if delayDistance > 0 && maxDelay < contentOffset.y {
-                return
+            if !ignoreDelay {
+                delayDistance += scrollDelta
+                
+                // Skip if the delay is not over yet
+                if delayDistance > 0 && maxDelay < contentOffset.y {
+                    return
+                }
             }
             
             // Compute the bar position

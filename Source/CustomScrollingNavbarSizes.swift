@@ -14,7 +14,7 @@ extension CustomScrollingNavigationController {
     }
     
     open var statusBarHeight: CGFloat {
-        return UIApplication.shared.statusBarFrame.size.height
+        return CGFloat.minimum(20, UIApplication.shared.statusBarFrame.size.height)
     }
     
     open var tabBarOffset: CGFloat {
