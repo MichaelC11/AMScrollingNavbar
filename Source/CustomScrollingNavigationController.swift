@@ -270,7 +270,7 @@ open class CustomScrollingNavigationController: UINavigationController, UIGestur
     
     // MARK: - Rotation handler
     
-    func didRotate(_ notification: Notification) {
+    @objc func didRotate(_ notification: Notification) {
         showNavbar()
     }
     
@@ -285,7 +285,7 @@ open class CustomScrollingNavigationController: UINavigationController, UIGestur
     
     // MARK: - Notification handler
     
-    func didBecomeActive(_ notification: Notification) {
+    @objc func didBecomeActive(_ notification: Notification) {
         if expandOnActive {
             showNavbar(animated: false)
         } else {
@@ -295,7 +295,7 @@ open class CustomScrollingNavigationController: UINavigationController, UIGestur
         }
     }
     
-    func willResignActive(_ notification: Notification) {
+    @objc func willResignActive(_ notification: Notification) {
         previousState = state
     }
     
@@ -338,10 +338,10 @@ open class CustomScrollingNavigationController: UINavigationController, UIGestur
         // Hide all the possible titles
         navigationItem.titleView?.alpha = alpha
         navigationBar.tintColor = navigationBar.tintColor.withAlphaComponent(alpha)
-        if let titleColor = navigationBar.titleTextAttributes?[NSForegroundColorAttributeName] as? UIColor {
-            navigationBar.titleTextAttributes?[NSForegroundColorAttributeName] = titleColor.withAlphaComponent(alpha)
+        if let titleColor = navigationBar.titleTextAttributes?[NSAttributedStringKey.foregroundColor] as? UIColor {
+            navigationBar.titleTextAttributes?[NSAttributedStringKey.foregroundColor] = titleColor.withAlphaComponent(alpha)
         } else {
-            navigationBar.titleTextAttributes?[NSForegroundColorAttributeName] = UIColor.black.withAlphaComponent(alpha)
+            navigationBar.titleTextAttributes?[NSAttributedStringKey.foregroundColor] = UIColor.black.withAlphaComponent(alpha)
         }
         
         // Hide all possible button items and navigation items
@@ -430,7 +430,7 @@ open class CustomScrollingHandler: NSObject, UIGestureRecognizerDelegate {
         
         super.init()
         
-        self.gestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(handlePan(_:)))
+        self.gestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(CustomScrollingHandler.handlePan(_:)))
         self.gestureRecognizer?.maximumNumberOfTouches = 1
         self.gestureRecognizer?.delegate = self
         scrollableView.addGestureRecognizer(self.gestureRecognizer!)
@@ -450,7 +450,7 @@ open class CustomScrollingHandler: NSObject, UIGestureRecognizerDelegate {
     }
     
     // MARK: - Gesture recognizer
-    func handlePan(_ gesture: UIPanGestureRecognizer) {
+    @objc func handlePan(_ gesture: UIPanGestureRecognizer) {
         if gesture.state != .failed {
             if let superview = scrollableView?.superview {
                 let translation = gesture.translation(in: superview)
