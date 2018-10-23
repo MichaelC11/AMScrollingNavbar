@@ -6,7 +6,7 @@
 [![Build Status](https://travis-ci.org/andreamazz/AMScrollingNavbar.svg)](https://travis-ci.org/andreamazz/AMScrollingNavbar)
 [![codecov.io](https://codecov.io/github/andreamazz/AMScrollingNavbar/coverage.svg?branch=master)](https://codecov.io/github/andreamazz/AMScrollingNavbar?branch=master)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
-![Swift 4](https://img.shields.io/badge/swift-4.2-orange.svg)
+![Swift 4](https://img.shields.io/badge/swift-4-orange.svg)
 [![Join the chat at https://gitter.im/andreamazz/AMScrollingNavbar](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/andreamazz/AMScrollingNavbar?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=46FNZD4PDVNRU)
 
@@ -25,7 +25,6 @@ scrolling of an observed content view
 - Version `2.0.0` introduce Swift 2.0 syntax.
 - Version `3.0.0` introduce Swift 3.0 syntax.
 - Version `4.0.0` introduce Swift 4.0 syntax.
-- Version `5.1.0` introduce Swift 4.2 syntax.
 
 If you are looking for the category implementation in Objective-C, make sure to checkout version `1.x` and prior, although the `2.x` is recomended.
 
@@ -51,7 +50,7 @@ github "andreamazz/AMScrollingNavbar"
 
 ## Usage
 
-Make sure to use `ScrollingNavigationController` instead of the standard `UINavigationController`. Either set the class of your `UINavigationController` in your storyboard, or create programmatically a `ScrollingNavigationController` instance in your code.
+Make sure to use a subclass of `ScrollingNavigationController` for your `UINavigationController`. Either set the class of your `UINavigationController` in your storyboard, or create programmatically a `ScrollingNavigationController` instance in your code.
 
 Use `followScrollView(_: delay:)` to start following the scrolling of a scrollable view (e.g.: a `UIScrollView` or `UITableView`).
 #### Swift
@@ -70,7 +69,7 @@ override func viewWillAppear(_ animated: Bool) {
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
 
-    [(ScrollingNavigationController *)self.navigationController followScrollView:self.tableView delay:0 scrollSpeedFactor:1 collapseDirection:NavigationBarCollapseDirectionScrollDown followers:nil];
+    [(ScrollingNavigationController *)self.navigationController followScrollView:self.tableView delay:50.0f];
 }
 ```
 
@@ -98,13 +97,12 @@ override func viewWillAppear(_ animated: Bool) {
 ```
 
 ## Followers
-To move another view, like a toolbar, alongside the navigation bar you can provide the view or multiple views as the `followers` parameter. Since you might want to have the follower up or down, you'll have to specify the scroll direction of the view once it starts to follow the navigation bar:
+To move another view, like a toolbar, alongside the navigation bar you can provide the view or multiple views as the `followers` parameter:
 ```swift
 if let navigationController = navigationController as? ScrollingNavigationController {
-    navigationController.followScrollView(tableView, delay: 50.0, followers: [NavigationBarFollower(view: customFooter, direction: .scrollDown)])
+    navigationController.followScrollView(tableView, delay: 50.0, followers: [toolbar])
 }
 ```
-
 Note that when navigating away from the controller the followers might keep the scroll offset. Refer to [Handling navigation](https://github.com/andreamazz/AMScrollingNavbar#handling-navigation) for proper setup.  
 
 ## Scrolling the TabBar
@@ -181,7 +179,7 @@ Want to support the development of [these free libraries](https://cocoapods.org/
 # MIT License
     The MIT License (MIT)
 
-    Copyright (c) 2018 Andrea Mazzini
+    Copyright (c) 2017 Andrea Mazzini
 
     Permission is hereby granted, free of charge, to any person obtaining a copy of
     this software and associated documentation files (the "Software"), to deal in

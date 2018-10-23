@@ -22,7 +22,7 @@ extension ScrollingNavigationController {
       // Account for the notch when the status bar is hidden
       statusBarHeight = max(UIApplication.shared.statusBarFrame.size.height, UIApplication.shared.delegate?.window??.safeAreaInsets.top ?? 0)
     }
-    return max(statusBarHeight - extendedStatusBarDifference, 0)
+    return statusBarHeight - extendedStatusBarDifference
   }
   
   // Extended status call changes the bounds of the presented view
@@ -32,7 +32,7 @@ extension ScrollingNavigationController {
   
   var tabBarOffset: CGFloat {
     // Only account for the tab bar if a tab bar controller is present and the bar is not translucent
-    if let tabBarController = tabBarController, !(topViewController?.hidesBottomBarWhenPushed ?? false) {
+    if let tabBarController = tabBarController {
       return tabBarController.tabBar.isTranslucent ? 0 : tabBarController.tabBar.frame.height
     }
     return 0
@@ -61,7 +61,7 @@ extension ScrollingNavigationController {
     return CGSize(width: scrollView.contentSize.width, height: scrollView.contentSize.height + verticalInset)
   }
   
-  var navbarFullHeight: CGFloat {
+  var deltaLimit: CGFloat {
     return navbarHeight - statusBarHeight
   }
 }
