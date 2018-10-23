@@ -99,9 +99,9 @@ open class CustomScrollingNavigationController: UINavigationController, UIGestur
     open func setup() {
         NotificationCenter.default.removeObserver(self)
         
-        NotificationCenter.default.addObserver(self, selector: #selector(ScrollingNavigationController.willResignActive(_:)), name: NSNotification.Name.UIApplicationWillResignActive, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(ScrollingNavigationController.didBecomeActive(_:)), name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(ScrollingNavigationController.didRotate(_:)), name: NSNotification.Name.UIDeviceOrientationDidChange, object: nil)
+      NotificationCenter.default.addObserver(self, selector: #selector(ScrollingNavigationController.willResignActive(_:)), name: UIApplication.willResignActiveNotification, object: nil)
+      NotificationCenter.default.addObserver(self, selector: #selector(ScrollingNavigationController.didBecomeActive(_:)), name: UIApplication.didBecomeActiveNotification, object: nil)
+      NotificationCenter.default.addObserver(self, selector: #selector(ScrollingNavigationController.didRotate(_:)), name: UIDevice.orientationDidChangeNotification, object: nil)
     }
     
     private var scrollHandlers: [CustomScrollingHandler] = []
@@ -338,10 +338,10 @@ open class CustomScrollingNavigationController: UINavigationController, UIGestur
         // Hide all the possible titles
         navigationItem.titleView?.alpha = alpha
         navigationBar.tintColor = navigationBar.tintColor.withAlphaComponent(alpha)
-        if let titleColor = navigationBar.titleTextAttributes?[NSAttributedStringKey.foregroundColor] as? UIColor {
-            navigationBar.titleTextAttributes?[NSAttributedStringKey.foregroundColor] = titleColor.withAlphaComponent(alpha)
+      if let titleColor = navigationBar.titleTextAttributes?[NSAttributedString.Key.foregroundColor] as? UIColor {
+        navigationBar.titleTextAttributes?[NSAttributedString.Key.foregroundColor] = titleColor.withAlphaComponent(alpha)
         } else {
-            navigationBar.titleTextAttributes?[NSAttributedStringKey.foregroundColor] = UIColor.black.withAlphaComponent(alpha)
+        navigationBar.titleTextAttributes?[NSAttributedString.Key.foregroundColor] = UIColor.black.withAlphaComponent(alpha)
         }
         
         // Hide all possible button items and navigation items
@@ -596,7 +596,7 @@ open class CustomScrollingHandler: NSObject, UIGestureRecognizerDelegate {
         
         delayDistance = maxDelay
         
-        UIView.animate(withDuration: duration, delay: 0, options: UIViewAnimationOptions.beginFromCurrentState, animations: {
+      UIView.animate(withDuration: duration, delay: 0, options: UIView.AnimationOptions.beginFromCurrentState, animations: {
             self.scrollNavigationController.updateSizing(delta)
             self.scrollNavigationController.updateFollowers(delta)
             self.scrollNavigationController.updateNavbarAlpha()
